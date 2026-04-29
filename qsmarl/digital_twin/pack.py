@@ -58,6 +58,12 @@ class BatteryPack:
 
         self.cells = [create_cell(float(soc), cell_config) for soc in socs]
 
+    def get_soc_array(self) -> np.ndarray:
+        return np.array([cell.soc for cell in self.cells], dtype=np.float64)
 
     def get_temperature_array(self) -> np.ndarray:
         return np.array([cell.temparature for cell in self.cells], dtype=np.float64)
+
+
+    def soc_variance(self) -> float:
+        return float(np.var(self.get_soc_array()))
