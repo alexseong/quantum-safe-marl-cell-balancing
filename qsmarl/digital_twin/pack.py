@@ -64,6 +64,5 @@ class BatteryPack:
     def get_temperature_array(self) -> np.ndarray:
         return np.array([cell.temparature for cell in self.cells], dtype=np.float64)
 
-
     def soc_variance(self) -> float:
         return float(np.var(self.get_soc_array()))

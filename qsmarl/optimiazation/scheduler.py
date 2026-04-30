@@ -2,6 +2,8 @@ from dataclasses import dataclass
 import numpy as np
 
 from qsmarl.balancing.transfer_graph import TransferEdge
+from qsmarl.optimiazation.qubo_builder import ActiveBalancingQuboBuilder, QuboConfig
+from qsmarl.optimiazation.ocean_solver import OceanQuboSolver
 
 
 @dataclass
@@ -26,3 +28,9 @@ class QuantumCompatibleScheduler:
         min_soc_gap: float = 0.02,
         num_reads: int = 100,
     ):
+        self.qubo_config = qubo_config or QuboConfig()
+        self.min_sop_gap = min_soc_gap
+        self.builder = ActiveBalancingQuboBuilder(self.qubo_config)
+        self.solver = OceanQuboSolver(num_reads=num_reads)
+
+    # def 

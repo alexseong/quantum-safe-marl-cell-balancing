@@ -1,6 +1,7 @@
 import numpy as np
 from qsmarl.digital_twin.pack import BatteryPack, BatteryPackConfig
-from qsmarl.optimiazation.scheduler import Q
+from qsmarl.optimiazation.scheduler import QuantumCompatibleScheduler
+from qsmarl.optimiazation.qubo_builder import QuboConfig
 
 def main():
     pack_config = BatteryPackConfig(num_cells=8)
@@ -13,7 +14,9 @@ def main():
     print("SOC variance:", pack.soc_variance())
 
     scheduler = QuantumCompatibleScheduler(
-
+        qubo_config = QuboConfig,
+        min_soc_gap: float = 0.02,
+        num_reads: int = 100,
     )
 
 

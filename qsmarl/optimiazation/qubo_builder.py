@@ -3,9 +3,50 @@ import numpy as np
 
 from qsmarl.balancing.transfer_graph import TransferEdge
 
+####################################################################
+## QUBO: Quadratic Unconstrained Binary Optimization
+####################################################################
 
 @dataclass
 class QuboConfig:
     # Hyper parameters: weights for the each condition
     # A large negative value(-) for high reward
     # A large positive value(+) for high penalty 
+    alpha_gap_reward: float = 10.0      # Reward for reducing SOC deviation
+    beta_loss_penalty: float = 1.0      # Penalty for energy efficiency loss
+    gamma_thermal_penalty: float = 1.0  # Penalty for temparature rise
+    lambda_one_source: float = 20.0     # Weight constraint that a cell cannot discharge twice
+    lambda_one_target: float = 20.0
+    lambda_max_edges: float = 5.0
+    max_active_edges: int = 2
+    efficiency: float = 0.95
+
+
+@dataclass
+class QuboModel:
+    Q: dict[tuple[str, str], float]
+    varibles: list[str]
+    edge_by_var: dict[str, TransferEdge]
+
+
+class ActiveBalancingQuboBuilder:
+    """
+    Build QUBO for active cell balancing schedule selection
+
+    Binary variable:
+        x_i_j = 1 if energy transfer from cell i to cell j is selected.
+
+    Objective:
+        minimize:
+            - SOC gap benefit
+            + energy loss penalty
+            + thermal penalty
+            + routing constraint penaltie
+    """
+
+    def __init__(self, config: QuboConfig):
+        self.config = config
+
+    
+
+
