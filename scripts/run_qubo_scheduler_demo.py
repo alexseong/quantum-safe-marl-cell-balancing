@@ -14,9 +14,23 @@ def main():
     print("SOC variance:", pack.soc_variance())
 
     scheduler = QuantumCompatibleScheduler(
-        qubo_config = QuboConfig,
-        min_soc_gap: float = 0.02,
-        num_reads: int = 100,
+        qubo_config=QuboConfig(
+            alpha_gap_reward=10.0,
+            beta_loss_penalty=1.0,
+            gamma_thermal_penalty=0.5,
+            lambda_one_source=20.0,
+            lambda_one_target=20.0,
+            lambda_max_edges=5.0,
+            max_active_edges=2,
+            efficiency=0.95
+        ),
+        min_soc_gap=0.03,
+        num_reads=200,
+    )
+
+    result = scheduler.schedule(
+        soc=pack.get_soc_array(),
+        temparatures=pack.get_temperature_array(),
     )
 
 

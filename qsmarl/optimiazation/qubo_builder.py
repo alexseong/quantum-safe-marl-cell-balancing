@@ -47,6 +47,48 @@ class ActiveBalancingQuboBuilder:
     def __init__(self, config: QuboConfig):
         self.config = config
 
+    @staticmethod
+    def var_name(edge: TransferEdge) -> str:
+        return f"x_{edge.source}_{edge.target}"
+
+    def build(
+        self,
+        edges: list[TransferEdge],
+        temparatures: np.ndarray,
+    ) -> QuboModel:
+        Q: dict[tuple[str, str], float] = {}
+        variables: list[str] = []
+        edge_by_var: dict[str, TransferEdge] = {}
+
+        for edge in edges:
+            v = self.var_name(edge)
+            variables.append(v)
+            edge_by_var[v] = edge
+
+            gap_benefit = -self.config.alpha_gap_reward * edge.soc_gap
+            loss_penalty = -self.config.beta_loss_penalty * (1.0 - self.config.efficiency)
+            thermal_penalty = self.config.gamma_thermal_penalty * (
+                temparatures[edge.source] /100.0
+            )
+
+            linear = gap_benefit + loss_penalty + thermal_penalty
+            Q[(v, v)] = Q.get((v, v), 0) + linear
+
+        print(Q)
+
+        self._add_one_source_constraint(Q, edges)
+
+    def _add_one_source_constraint(
+        self,
+        Q: dict[tuple[str, str], float],
+        edges: list[TransferEdge],
+    ) -> None:
+        """
+            Penalize selecting multiple outoging transfers from the same source cell
+        """
+
+
+
     
 
 

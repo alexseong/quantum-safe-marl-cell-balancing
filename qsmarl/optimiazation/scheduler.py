@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import numpy as np
 
-from qsmarl.balancing.transfer_graph import TransferEdge
+from qsmarl.balancing.transfer_graph import TransferEdge, build_candidate_edges
 from qsmarl.optimiazation.qubo_builder import ActiveBalancingQuboBuilder, QuboConfig
 from qsmarl.optimiazation.ocean_solver import OceanQuboSolver
 
@@ -33,4 +33,24 @@ class QuantumCompatibleScheduler:
         self.builder = ActiveBalancingQuboBuilder(self.qubo_config)
         self.solver = OceanQuboSolver(num_reads=num_reads)
 
-    # def 
+    def schedule(
+        self, 
+        soc: np.ndarray,
+        temparatures: np.ndarray,
+    ) -> ScheduleResult:
+
+        edges = build_candidate_edges(soc=soc, min_gap=self.min_sop_gap)
+
+        if not edges:
+            return ScheduleResult(
+                selected_edges=[],
+                sample=[],
+                energy=0.0
+            )
+
+        qubo_model = self.builder.build(edges, temparatures)
+
+        return ScheduleResult(
+
+        )
+
