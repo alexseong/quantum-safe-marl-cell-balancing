@@ -18,7 +18,8 @@ class TorchIsingSolver:
         self.num_reads = num_reads
 
     def solve(self, Q: dict[tuple[str, str], float]) -> SolverResult:
-        # 1. Create BQM
+        # 1. Variable Mapping
+        nodes = sorted(list(set([k for tup in Q.keys() for k in tup])))
         bqm = dimod.BinaryQuadraticModel.from_qubo(Q)
 
         #2. Select Sampler         

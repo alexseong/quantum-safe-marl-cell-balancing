@@ -49,7 +49,8 @@ class QuantumCompatibleScheduler:
             )
 
         qubo_model = self.builder.build(edges, temparatures)
-        solver_result = self.solver.solve(qubo_model.Q)
+        print(qubo_model.Q.keys())
+        # solver_result = self.solver.solve(qubo_model.Q)
 
         # return ScheduleResult(
 
