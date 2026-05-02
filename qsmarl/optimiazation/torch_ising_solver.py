@@ -1,16 +1,7 @@
+import torch
+import numpy as np
 from dataclasses import dataclass
 
-import dimod 
-
-try:
-    #dewave-neal was deprecated and merged to dewave-sampler  
-    # import neal
-    from dwave.sampler import SimulatedAnnealingSampler
-except ImportError:
-    # neal = None
-    SimulatedAnnealingSampler = None
-
-SimulatedAnnealingSampler = None
 
 @dataclass
 class SolverResult:
@@ -18,19 +9,12 @@ class SolverResult:
     energy: float
 
 
-class OceanQuboSolver:
+class TorchIsingSolver:
     """
-    D-Wave Ocean-compatible QUBO solver.
-
-    V0.1 uses simulated annealing through DWaveSampler if available,
-    otherwise falls back to dimod ExactSolver for tiny problems.
-
-    Later:
-    - LeapHybridCQMSampler
-    - hybrid solvers
+    High speed Ising solver using PyTorch and GPU instead of D-Wave Ocean.
     """
 
-    def __init__(self, num_reads: int = 100):
+    def __init__(self, num_reads: int = 1000):
         self.num_reads = num_reads
 
     def solve(self, Q: dict[tuple[str, str], float]) -> SolverResult:
