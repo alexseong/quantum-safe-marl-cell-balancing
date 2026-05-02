@@ -13,6 +13,7 @@ tensorboard==2.20.0
 dimod==0.12.21
 dwave-ocean-sdk==9.3.0
 # dwave-neal
+dwave-samplers==1.7.0
 
 qiskit==2.4.0
 qiskit-aer==0.17.2

@@ -26,7 +26,7 @@ class QuantumCompatibleScheduler:
         self,
         qubo_config: QuboConfig | None = None,
         min_soc_gap: float = 0.02,
-        num_reads: int = 100,
+        num_reads: int = 10,
     ):
         self.qubo_config = qubo_config or QuboConfig()
         self.min_sop_gap = min_soc_gap
@@ -49,8 +49,9 @@ class QuantumCompatibleScheduler:
             )
 
         qubo_model = self.builder.build(edges, temparatures)
+        solver_result = self.solver.solve(qubo_model.Q)
 
-        return ScheduleResult(
+        # return ScheduleResult(
 
-        )
+        # )
 

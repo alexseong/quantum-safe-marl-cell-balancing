@@ -72,11 +72,19 @@ class ActiveBalancingQuboBuilder:
             )
 
             linear = gap_benefit + loss_penalty + thermal_penalty
+
+            # Assigne the net linear cost of selecting edge v to the diagonal entry Q(v, v) of the QUBO matrix.
+            # - Store the linear term (representing the sum o fnet benefits and costs incurred 
+            # - by selecting edge v) into the diagonal elements of the QUBO matrix.
             Q[(v, v)] = Q.get((v, v), 0) + linear
 
-        print(Q)
 
         self._add_one_source_constraint(Q, edges)
+        self._add_one_target_constraint(Q, edges)
+        self._add_max_edges_constraint(Q, variables)
+
+        return QuboModel(Q=Q, varibles=variables, edge_by_var=edge_by_var )
+
 
     def _add_one_source_constraint(
         self,
@@ -84,8 +92,77 @@ class ActiveBalancingQuboBuilder:
         edges: list[TransferEdge],
     ) -> None:
         """
-            Penalize selecting multiple outoging transfers from the same source cell
+            Penalize selecting multiple outoging transfers from the same source cell.
+
+            Constraint:
+                sum_j x_ij <= 1
+
+            QUBO penalty aproximation:
+                lambda * x_a * x_b for all pairs sharing same source
         """
+        lam = self.config.lambda_one_source
+
+        for a_idx in range(len(edges)):
+            for b_idx in range(a_idx + 1, len(edges)):
+                e1 = edges[a_idx]
+                e2 = edges[b_idx]
+
+                if e1.source == e2.source:
+                    v1 = self.var_name(e1)
+                    v2 = self.var_name(e2)
+                    key = tuple(sorted((v1, v2)))
+                    Q[key] = Q.get(key, 0.0) + lam
+
+    def _add_one_target_constraint(
+        self,
+        Q: dict[tuple[str, str], float],
+        edges: list[TransferEdge],
+    ) -> None:
+        """
+            Penalize selecting multiple incoming transfers into the same target cell.
+
+            Constraint:
+                sum_j x_ij <= 1
+
+            QUBO penalty aproximation:
+                lambda * x_a * x_b for all pairs sharing same source
+        """
+        lam = self.config.lambda_one_target
+
+        for a_idx in range(len(edges)):
+            for b_idx in range(a_idx + 1, len(edges)):
+                e1 = edges[a_idx]
+                e2 = edges[b_idx]
+
+                if e1.target == e2.target:
+                    v1 = self.var_name(e1)
+                    v2 = self.var_name(e2)
+                    key = tuple(sorted((v1, v2)))
+                    Q[key] = Q.get(key, 0.0) + lam
+
+    def _add_max_edges_constraint(
+        self,
+        Q: dict[tuple[str, str], float],
+        variables: list[str],
+    ) -> None:
+        """
+            Soft penalty for selecting too many active routes.
+
+            For v0.1 we use a pairwise crowding penalty.
+            Later this can be replaced by exact cardinality encoding.
+        """
+        lam = self.config.lambda_max_edges
+        k = self.config.max_active_edges
+
+        if k >= len(variables):
+            return
+
+        for i in range(len(variables)):
+            for j in range(i+1, len(variables)):
+                key = tuple(sorted((variables[i], variables[j])))
+                Q[key] = Q.get(key, 0.0) + lam / max(1, k)
+
+
 
 
 
