@@ -33,6 +33,16 @@ def main():
         temparatures=pack.get_temperature_array(),
     )
 
+    print("\n=== QUBO Scheduler Result ===")
+    print("Energy:", result.energy)
+    print("Sampler:", result.sample)
+
+    print("\nSelected transfer edges:")
+    for edge in result.selected_edges:
+        print(
+            f"cell {edge.source} -> cell {edge.target}, "
+            f"SOC gap = {edge.soc_gap:.4f}"
+        )
 
 if __name__ == "__main__":
     main()
