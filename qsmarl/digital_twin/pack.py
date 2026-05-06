@@ -66,3 +66,29 @@ class BatteryPack:
 
     def soc_variance(self) -> float:
         return float(np.var(self.get_soc_array()))
+
+    def apply_active_transfer(
+        self,
+        source: int,
+        target: int,
+        transfer_soc: float,
+        efficiency: float = 0.95,
+        thermal_gain: float = 0.95,
+    ) -> None:
+        """
+        Apply active balancing transfer from source cell to target cell.
+
+        source loses transfer_soc.
+        target gains transfer_soc * efficiency.
+
+        This is a simplified SOC-domain transfer model.
+        """
+
+        if source == target:
+            return
+
+        if source < 0 or source >= len(self.cells):
+            raise IndexError("source index out of range")
+
+        if target < 0 or target >= len(self.cells):
+            raise IndexError("target index out of range")
