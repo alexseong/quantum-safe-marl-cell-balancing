@@ -22,8 +22,8 @@ def main():
 
     for step in range(num_step):
         result = scheduler.schedule(
-            soc=pack.get_soc_array().
-            temparatures=pack.get_temparature_array(),
+            soc=pack.get_soc_array(),
+            temperatures=pack.get_temperature_array(),
         )
 
         for edge in result.selected_edges:

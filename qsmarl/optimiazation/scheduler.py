@@ -41,7 +41,7 @@ class QuantumCompatibleScheduler:
     def schedule(
         self, 
         soc: np.ndarray,
-        temparatures: np.ndarray,
+        temperatures: np.ndarray,
     ) -> ScheduleResult:
 
         edges = build_candidate_edges(soc=soc, min_gap=self.min_sop_gap)
@@ -53,7 +53,7 @@ class QuantumCompatibleScheduler:
                 energy=0.0
             )
 
-        qubo_model = self.builder.build(edges, temparatures)
+        qubo_model = self.builder.build(edges, temperatures)
         solver_result = self.solver.solve(qubo_model.Q)
 
         selected_edges: list[TransferEdge] = []

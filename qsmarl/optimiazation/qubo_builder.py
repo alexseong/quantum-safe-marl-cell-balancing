@@ -41,7 +41,7 @@ class ActiveBalancingQuboBuilder:
             - SOC gap benefit
             + energy loss penalty
             + thermal penalty
-            + routing constraint penaltie
+            + routing constraint penalty
     """
 
     def __init__(self, config: QuboConfig):
@@ -54,7 +54,7 @@ class ActiveBalancingQuboBuilder:
     def build(
         self,
         edges: list[TransferEdge],
-        temparatures: np.ndarray,
+        temperatures: np.ndarray,
     ) -> QuboModel:
         Q: dict[tuple[str, str], float] = {}
         variables: list[str] = []
@@ -68,7 +68,7 @@ class ActiveBalancingQuboBuilder:
             gap_benefit = -self.config.alpha_gap_reward * edge.soc_gap
             loss_penalty = -self.config.beta_loss_penalty * (1.0 - self.config.efficiency)
             thermal_penalty = self.config.gamma_thermal_penalty * (
-                temparatures[edge.source] /100.0
+                temperatures[edge.source] /100.0
             )
 
             linear = gap_benefit + loss_penalty + thermal_penalty

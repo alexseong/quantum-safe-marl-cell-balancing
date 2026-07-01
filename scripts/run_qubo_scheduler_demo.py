@@ -30,7 +30,7 @@ def main():
 
     result = scheduler.schedule(
         soc=pack.get_soc_array(),
-        temparatures=pack.get_temperature_array(),
+        temperatures=pack.get_temperature_array(),
     )
 
     print("\n=== QUBO Scheduler Result ===")
